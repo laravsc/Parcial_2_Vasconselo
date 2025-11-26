@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Eliminar Alumno{% endblock %}
+{% block content %}
+  <h2>Eliminar Alumno</h2>
+  <p>¿Querés eliminar a {{ alumno.nombre }} {{ alumno.apellido }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+    <a class="btn btn-secondary" href="{% url 'alumnos:dashboard' %}">Cancelar</a>
+  </form>
+{% endblock %}

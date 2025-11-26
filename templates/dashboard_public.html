@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <h2>Dashboard</h2>
+  <p>Bienvenido, {{ user.username }}. Esta vista requiere autenticación.</p>
+  <p>Si querés ir al panel de alumnos, <a href="{% url 'alumnos:dashboard' %}">hacé clic acá</a> (si ya está implementado).</p>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Mis Alumnos{% endblock %}
+{% block content %}
+  <h2>Mis Alumnos</h2>
+  <p><a class="btn btn-primary" href="{% url 'alumnos:crear' %}">Crear alumno</a></p>
+
+  {% if alumnos %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Documento</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in alumnos %}
+          <tr>
+            <td>{{ a.nombre }}</td>
+            <td>{{ a.apellido }}</td>
+            <td>{{ a.documento }}</td>
+            <td>{{ a.email }}</td>
+            <td>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'alumnos:editar' a.pk %}">Editar</a>
+
+              <!-- Envío por POST (form) -->
+              <form method="post" action="{% url 'alumnos:enviar_pdf' a.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-success" type="submit">Enviar PDF por correo</button>
+              </form>
+
+              <!-- Eliminar -->
+              <form method="post" action="{% url 'alumnos:eliminar' a.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Eliminar alumno?');">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No tenés alumnos todavía.</p>
+  {% endif %}
+{% endblock %}

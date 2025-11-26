@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+  <div class="p-4 bg-light rounded">
+    <h1>Bienvenido al parcial</h1>
+    <p>Esta es la página pública de inicio. Iniciá sesión o registrate para continuar.</p>
+    <p>
+      <a class="btn btn-primary" href="{% url 'accounts:login' %}">Ingresar</a>
+      <a class="btn btn-outline-secondary" href="{% url 'accounts:registro' %}">Registrarme</a>
+      <a class="btn btn-link" href="{% url 'core:about' %}">Sobre el proyecto</a>
+    </p>
+  </div>
+{% endblock %}
