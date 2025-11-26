@@ -28,6 +28,9 @@
             <td>{{ a.email }}</td>
             <td>
                 <a href="{% url 'alumnos:editar' a.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <a href="{% url 'enviar_pdf' alumno.id %}" class="btn btn-sm btn-info">
+    Enviar PDF por correo
+</a>
 
                 <form method="post"
                       action="{% url 'alumnos:eliminar' a.pk %}"

@@ -8,4 +8,5 @@ urlpatterns = [
     path('crear/', views.crear_alumno, name='crear'),
     path('<int:pk>/editar/', views.editar_alumno, name='editar'),
     path('<int:pk>/eliminar/', views.eliminar_alumno, name='eliminar'),
+    path("enviar_pdf/<int:alumno_id>/", views.enviar_pdf, name="enviar_pdf"),
 ]

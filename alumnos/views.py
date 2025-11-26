@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Alumno
 from .forms import AlumnoForm
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from django.core.mail import EmailMessage
+from io import BytesIO
 
 @login_required
 def dashboard(request):
@@ -44,3 +48,38 @@ def eliminar_alumno(request, pk):
         messages.success(request, 'Alumno eliminado.')
         return redirect('alumnos:dashboard')
     return render(request, 'alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+
+def enviar_pdf(request, alumno_id):
+    alumno = Alumno.objects.get(id=alumno_id, usuario=request.user)
+
+    # Crear PDF en memoria
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+
+    p.setFont("Helvetica", 14)
+    p.drawString(50, 800, "Ficha del Alumno")
+    p.setFont("Helvetica", 12)
+    p.drawString(50, 770, f"Nombre: {alumno.nombre}")
+    p.drawString(50, 750, f"Apellido: {alumno.apellido}")
+    p.drawString(50, 730, f"Email: {alumno.email if hasattr(alumno, 'email') else '---'}")
+    p.drawString(50, 710, f"Creado por: {request.user.username}")
+
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    # Enviar email al docente
+    email = EmailMessage(
+        subject="PDF del alumno",
+        body="Adjunto PDF del alumno solicitado.",
+        from_email="noreply@miapp.com",
+        to=["ematevez@gmail.com"],
+    )
+    email.attach("alumno.pdf", pdf, "application/pdf")
+    email.send()
+
+    messages.success(request, "PDF enviado correctamente al docente.")
+    return redirect("dashboard")
