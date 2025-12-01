@@ -1,7 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
 {% block content %}
   <h2>Dashboard</h2>
-  <p>Bienvenido, {{ user.username }}. Esta vista requiere autenticación.</p>
-  <p>Si querés ir al panel de alumnos, <a href="{% url 'alumnos:dashboard' %}">hacé clic acá</a> (si ya está implementado).</p>
+  <p>Bienvenido, {{ user.username }}.</p>
+
+  <ul>
+    {% for alumno in alumnos %}
+      <li>
+        {{ alumno.nombre }} {{ alumno.apellido }}
+        <!-- enlace para enviar PDF -->
+        <a href="{% url 'alumnos:enviar_pdf' alumno.id %}">Enviar PDF</a>
+      </li>
+    {% empty %}
+      <li>No tenés alumnos todavía.</li>
+    {% endfor %}
+  </ul>
 {% endblock %}

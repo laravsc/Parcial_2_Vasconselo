@@ -49,8 +49,9 @@ def eliminar_alumno(request, pk):
         return redirect('alumnos:dashboard')
     return render(request, 'alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
+@login_required
 def enviar_pdf(request, alumno_id):
-    alumno = Alumno.objects.get(id=alumno_id, usuario=request.user)
+    alumno = get_object_or_404(Alumno, id=alumno_id, usuario=request.user)
 
     # Crear PDF en memoria
     buffer = BytesIO()
