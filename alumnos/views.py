@@ -77,7 +77,7 @@ def enviar_pdf(request, alumno_id):
         subject="PDF del alumno",
         body="Adjunto PDF del alumno solicitado.",
         from_email="noreply@miapp.com",
-        to=["ematevez@gmail.com"],
+        to=["laravasconseloa@gmail.com"],
     )
     email.attach("alumno.pdf", pdf, "application/pdf")
     email.send()
