@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('core.urls')),         # <<< la raíz ahora apunta a core
     path('accounts/', include('accounts.urls')),  
     path('alumnos/', include(('alumnos.urls', 'alumnos'), namespace='alumnos')),
+    path("scraper/", include("scraper.urls")),
 
 ]

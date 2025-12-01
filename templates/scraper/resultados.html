@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+<h2>Resultados para "{{ keyword }}"</h2>
+
+<form method="POST" action="{% url 'scraper:enviar' %}">
+    {% csrf_token %}
+    <input type="hidden" name="keyword" value="{{ keyword }}">
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Título encontrado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resultados %}
+            <tr>
+                <td>{{ r }}</td>
+                <input type="hidden" name="resultados" value="{{ r }}">
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" type="submit">Enviar por correo</button>
+</form>
+
+{% endblock %}
