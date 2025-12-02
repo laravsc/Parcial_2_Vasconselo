@@ -91,8 +91,15 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'no-reply@tu-dominio.test'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "laravasconseloa@gmail.com"
+EMAIL_HOST_PASSWORD = "whsg crwc iasy homa"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_REDIRECT_URL = '/alumnos/'        # cuando inicien sesión irán a /alumnos/
 LOGOUT_REDIRECT_URL = '/'               # después de logout vuelven a la home
