@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Enviar resultados por correo{% endblock %}
+
+{% block content %}
+<h2>Enviar resultados por correo</h2>
+
+<p><strong>Palabra:</strong> {{ palabra }}</p>
+<p><strong>Extracto:</strong> {{ descripcion|truncatechars:300 }}</p>
+<p><strong>Fuente:</strong> <a href="{{ url }}" target="_blank">{{ url }}</a></p>
+
+<form method="post" action="{% url 'scraper:enviar' %}">
+    {% csrf_token %}
+    <input type="hidden" name="palabra" value="{{ palabra }}">
+    <input type="hidden" name="descripcion" value="{{ descripcion }}">
+    <input type="hidden" name="url" value="{{ url }}">
+
+    <div class="mb-3">
+        <label for="id_dest" class="form-label">Destinatarios (separá con comas o ; )</label>
+        <input type="text" id="id_dest" name="destinatarios" class="form-control"
+        placeholder="ej: profe@ejemplo.com, alumno@ejemplo.com"
+        value="{{ default_dest }}">
+        <div class="form-text">El PDF también se enviará automáticamente al email con el que estés logueado (si corresponde).</div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Enviar PDF</button>
+    <a href="{% url 'scraper:buscar' %}" class="btn btn-secondary">Volver</a>
+</form>
+{% endblock %}

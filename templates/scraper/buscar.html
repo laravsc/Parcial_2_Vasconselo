@@ -4,7 +4,6 @@
 {% block content %}
 <h2>Scraper Wikipedia</h2>
 
-<!-- Form: usa GET para búsquedas (mejor para compartir URLs) -->
 <form method="get" action="{% url 'scraper:buscar' %}">
     {{ form.as_p }}
     <button class="btn btn-primary" type="submit">Buscar</button>
@@ -34,8 +33,9 @@
                 <td><a href="{{ r.url }}" target="_blank" rel="noopener">Abrir</a></td>
                 <td>
                     <!-- El botón enviar envía por GET a la vista enviar_resultados -->
-                    <a class="btn btn-sm btn-success" href="{% url 'scraper:enviar' %}?palabra={{ r.titulo|urlencode }}&descripcion={{ r.descripcion|urlencode }}&url={{ r.url|urlencode }}">
-                Enviar PDF
+                    <a class="btn btn-sm btn-success" 
+                    href="{% url 'scraper:enviar' %}?palabra={{ r.titulo|urlencode }}&descripcion={{ r.descripcion|urlencode }}&url={{ r.url|urlencode }}">
+                    Enviar PDF
                     </a>
                 </td>
             </tr>

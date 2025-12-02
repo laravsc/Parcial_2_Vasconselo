@@ -1,6 +1,8 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 from django.shortcuts import render
+from django.contrib import messages
 from django.core.mail import EmailMessage
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -75,40 +77,91 @@ def buscar(request):
 
 
 def enviar_resultados(request):
+    
+    # datos recibidos por querystring (cuando se llamó desde la tabla de resultados)
+    palabra = request.GET.get("palabra") or request.POST.get("palabra")
+    descripcion = request.GET.get("descripcion") or request.POST.get("descripcion")
+    url = request.GET.get("url") or request.POST.get("url")
 
-    palabra = request.GET.get("palabra")
-    descripcion = request.GET.get("descripcion")
-    url = request.GET.get("url")
+    # Valor por defecto para el input destinatario: email del usuario logueado (si existe)
+    default_dest = request.user.email if request.user.is_authenticated else ""
 
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    y = 750
+    if request.method == "POST":
+        # El formulario envía un campo 'destinatarios' con emails separados por comas o punto y coma
+        dest_text = request.POST.get("destinatarios", "").strip()
+        # Normalizar: split por comas o punto y coma, quitar espacios vacíos
+        destinatarios = [e.strip() for e in re.split(r"[;,]+", dest_text) if e.strip()]
+        # Asegurarnos de que el usuario logueado reciba el mail (si tiene email)
+        if request.user.is_authenticated and request.user.email:
+            if request.user.email not in destinatarios:
+                destinatarios.append(request.user.email)
 
-    p.setFont("Helvetica", 14)
-    p.drawString(50, y, f"Resultados Wikipedia: {palabra}")
+        if not destinatarios:
+            messages.error(request, "Ingresá al menos un correo destinatario.")
+            return render(request, "scraper/enviar_form.html", {
+                "palabra": palabra,
+                "descripcion": descripcion,
+                "url": url,
+                "default_dest": dest_text
+            })
 
-    y -= 40
-    p.setFont("Helvetica", 10)
-    p.drawString(50, y, descripcion[:900])
+        # Generar PDF en memoria
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
+        y = 750
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(50, y, f"Resultados Wikipedia: {palabra or 'Sin título'}")
+        y -= 30
+        p.setFont("Helvetica", 10)
 
-    y -= 40
-    p.drawString(50, y, f"URL: {url}")
+        if descripcion:
+            max_chars = 900
+            text = descripcion[:max_chars]
 
-    p.showPage()
-    p.save()
-    buffer.seek(0)
+            import textwrap
+            lines = textwrap.wrap(text, width=90)
+            for line in lines:
+                if y < 80:
+                    p.showPage()
+                    y = 750
+                    p.setFont("Helvetica", 10)
+                p.drawString(50, y, line)
+                y -= 14
+        # agregar la URL al final
+        if y < 120:
+            p.showPage()
+            y = 750
+        p.setFont("Helvetica-Oblique", 9)
+        p.drawString(50, y-10, f"Fuente: {url or 'N/A'}")
 
-    email = EmailMessage(
-        subject="Resultados de Wikipedia",
-        body=f"Aquí están los resultados para la palabra: {palabra}",
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[request.user.email],
-    )
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        pdf_bytes = buffer.read()
+        buffer.close()
 
-    email.attach(f"wiki_{palabra}.pdf", buffer.read(), "application/pdf")
-    email.send()
+        # Enviar email con adjunto a todos los destinatarios
+        subject = f"Resultados Wikipedia: {palabra or ''}"
+        body = f"A continuación se adjunta el PDF con los resultados para: {palabra or ''}\n\nFuente: {url or ''}"
+        email = EmailMessage(
+            subject=subject,
+            body=body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=destinatarios,
+        )
+        email.attach(f"wiki_{(palabra or 'resultados')}.pdf", pdf_bytes, "application/pdf")
+        email.send()
 
-    return render(request, "scraper/enviado.html")
+        messages.success(request, f"PDF enviado a: {', '.join(destinatarios)}")
+        return render(request, "scraper/enviado.html", {"palabra": palabra, "destinatarios": destinatarios})
+
+    # GET: mostrar formulario con campo destinatarios
+    return render(request, "scraper/enviar_form.html", {
+        "palabra": palabra,
+        "descripcion": descripcion,
+        "url": url,
+        "default_dest": default_dest
+    })
 
 def scraper_resultados(request):
     palabra = request.GET.get("palabra")

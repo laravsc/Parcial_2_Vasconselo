@@ -1,2 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Enviado{% endblock %}
+
+{% block content %}
 <h2>PDF enviado correctamente ✔</h2>
-<a href="{% url 'scraper:buscar' %}" class="btn btn-primary">Volver</a>
+{% if destinatarios %}
+<p>Se envió el PDF a: <strong>{{ destinatarios|join:", " }}</strong></p>
+{% endif %}
+<p><a href="{% url 'scraper:buscar' %}" class="btn btn-primary">Volver al buscador</a></p>
+{% endblock %}
