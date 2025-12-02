@@ -2,7 +2,7 @@
 
 <h2>Scraper Wikipedia</h2>
 
-<form method="post">
+<form method="get" action="{% url 'scraper:buscar' %}">
     {% csrf_token %}
     {{ form }}
     <button class="btn btn-primary">Buscar</button>
@@ -25,7 +25,7 @@
                 <td>{{ r.descripcion }}</td>
                 <td>
                     <a href="{% url 'scraper:enviar' %}?palabra={{ r.titulo }}&descripcion={{ r.descripcion }}&url={{ r.url }}"
-                       class="btn btn-success">Enviar PDF</a>
+class="btn btn-success">Enviar PDF</a>
                 </td>
             </tr>
             {% endfor %}
