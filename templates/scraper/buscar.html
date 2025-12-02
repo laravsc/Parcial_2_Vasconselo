@@ -1,21 +1,29 @@
-{% load static %}
+{% extends "base.html" %}
+{% block title %}Scraper Wikipedia{% endblock %}
 
+{% block content %}
 <h2>Scraper Wikipedia</h2>
 
+<!-- Form: usa GET para búsquedas (mejor para compartir URLs) -->
 <form method="get" action="{% url 'scraper:buscar' %}">
-    {% csrf_token %}
-    {{ form }}
-    <button class="btn btn-primary">Buscar</button>
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Buscar</button>
 </form>
 
+<hr>
+
+{% if palabra %}
+    <h4>Resultados para: "{{ palabra }}"</h4>
+{% endif %}
+
 {% if resultados %}
-    <h3>Resultados:</h3>
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Título</th>
-                <th>Descripción</th>
-                <th></th>
+                <th>Descripción (primer párrafo)</th>
+                <th>Enlace</th>
+                <th>Enviar</th>
             </tr>
         </thead>
         <tbody>
@@ -23,12 +31,19 @@
             <tr>
                 <td>{{ r.titulo }}</td>
                 <td>{{ r.descripcion }}</td>
+                <td><a href="{{ r.url }}" target="_blank" rel="noopener">Abrir</a></td>
                 <td>
-                    <a href="{% url 'scraper:enviar' %}?palabra={{ r.titulo }}&descripcion={{ r.descripcion }}&url={{ r.url }}"
-class="btn btn-success">Enviar PDF</a>
+                    <!-- El botón enviar envía por GET a la vista enviar_resultados -->
+                    <a class="btn btn-sm btn-success" href="{% url 'scraper:enviar' %}?palabra={{ r.titulo|urlencode }}&descripcion={{ r.descripcion|urlencode }}&url={{ r.url|urlencode }}">
+                Enviar PDF
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+{% elif palabra %}
+    <p>No se encontraron resultados o hubo un problema con la búsqueda.</p>
 {% endif %}
+
+{% endblock %}
