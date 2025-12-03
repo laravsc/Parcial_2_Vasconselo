@@ -1,77 +1,219 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - Alumnos{% endblock %}
+{% block title %}Dashboard Principal{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="mb-0"><i class="bi bi-people me-2"></i>Gestión de Alumnos</h2>
-        <p class="text-muted mb-0">Administra la información de todos los estudiantes registrados</p>
-    </div>
-    <a class="btn btn-primary" href="{% url 'alumnos:crear' %}">
-        <i class="bi bi-person-plus me-2"></i>Crear Alumno
-    </a>
+<div class="mb-4">
+    <h1 class="h3 fw-bold text-dark"><i class="bi bi-speedometer2 me-2"></i>Dashboard Principal</h1>
+    <p class="text-muted">Resumen general del sistema y actividades recientes</p>
 </div>
 
-{% if alumnos %}
-<div class="card card-custom shadow">
-    <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Lista de Alumnos Registrados</h5>
-        <span class="badge bg-light text-dark fs-6">{{ alumnos|length }} alumno{{ alumnos|pluralize }}</span>
+<!-- MÉTRICAS PRINCIPALES -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card border-0 shadow-sm h-100 bg-primary bg-gradient text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 opacity-75">TOTAL ALUMNOS</h6>
+                        <h2 class="display-5 fw-bold">{{ total_alumnos|default:"0" }}</h2>
+                        <p class="mb-0 opacity-75">Estudiantes registrados</p>
+                    </div>
+                    <div class="display-1 opacity-25">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-custom table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Documento</th>
-                    <th>Email</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for a in alumnos %}
-                <tr>
-                    <td class="fw-semibold">{{ a.nombre }}</td>
-                    <td>{{ a.apellido }}</td>
-                    <td>{{ a.documento }}</td>
-                    <td>{{ a.email }}</td>
-                    <td>
-                        <div class="d-flex justify-content-center gap-2">
-                            <a href="{% url 'alumnos:editar' a.pk %}" class="btn btn-sm btn-outline-secondary"
-                                data-bs-toggle="tooltip" title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a href="{% url 'alumnos:enviar_pdf' a.id %}" class="btn btn-sm btn-info"
-                                data-bs-toggle="tooltip" title="Enviar PDF por email">
-                                <i class="bi bi-envelope-arrow-up"></i>
-                            </a>
-                            <form method="post" action="{% url 'alumnos:eliminar' a.pk %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
-                                    title="Eliminar"
-                                    onclick="return confirm('¿Estás seguro de eliminar a {{ a.nombre }} {{ a.apellido }}?');">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-0 shadow-sm h-100 bg-success bg-gradient text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 opacity-75">ALUMNOS ACTIVOS</h6>
+                        <h2 class="display-5 fw-bold">{{ alumnos_activos|default:"0" }}</h2>
+                        <p class="mb-0 opacity-75">Estudiantes activos</p>
+                    </div>
+                    <div class="display-1 opacity-25">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-0 shadow-sm h-100 bg-info bg-gradient text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 opacity-75">PENDIENTES</h6>
+                        <h2 class="display-5 fw-bold">{{ pendientes|default:"0" }}</h2>
+                        <p class="mb-0 opacity-75">Documentación pendiente</p>
+                    </div>
+                    <div class="display-1 opacity-25">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- ACCIONES RÁPIDAS -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-lightning me-2"></i>Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                        <i class="bi bi-people me-3 fs-4"></i>
+                        <div class="text-start">
+                            <strong>Gestión de Alumnos</strong>
+                            <small class="d-block opacity-75">Ver lista completa</small>
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </a>
+                    
+                    <a href="{% url 'alumnos:crear' %}" class="btn btn-success btn-lg d-flex align-items-center">
+                        <i class="bi bi-person-plus me-3 fs-4"></i>
+                        <div class="text-start">
+                            <strong>Agregar Alumno</strong>
+                            <small class="d-block opacity-75">Registrar nuevo estudiante</small>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'scraper:buscar' %}" class="btn btn-info btn-lg d-flex align-items-center">
+                        <i class="bi bi-search me-3 fs-4"></i>
+                        <div class="text-start">
+                            <strong>Búsqueda</strong>
+                            <small class="d-block opacity-75">Buscar en Wikipedia</small>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="btn btn-warning btn-lg d-flex align-items-center">
+                        <i class="bi bi-file-earmark-pdf me-3 fs-4"></i>
+                        <div class="text-start">
+                            <strong>Generar Reportes</strong>
+                            <small class="d-block opacity-75">Reportes en PDF</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ALUMNOS RECIENTES -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>Alumnos Registrados Recientemente</h5>
+            </div>
+            <div class="card-body">
+                {% if alumnos_recientes %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Estado</th>
+                                <th>Fecha Registro</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alumno in alumnos_recientes %}
+                            <tr>
+                                <td class="fw-semibold">{{ alumno.nombre }} {{ alumno.apellido }}</td>
+                                <td>{{ alumno.email }}</td>
+                                <td>
+                                    <span class="badge bg-success">Activo</span>
+                                </td>
+                                <td>{{ alumno.fecha_registro|date:"d/m/Y" }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{% url 'alumnos:editar' alumno.pk %}" class="btn btn-outline-secondary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'alumnos:enviar_pdf' alumno.id %}" class="btn btn-outline-info" title="Enviar PDF">
+                                            <i class="bi bi-envelope"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-primary" title="Ver">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-people display-4 text-muted mb-3"></i>
+                    <p class="text-muted">No hay alumnos registrados recientemente.</p>
+                    <a href="{% url 'alumnos:crear' %}" class="btn btn-primary">Agregar Primer Alumno</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
-{% else %}
-<div class="text-center py-5">
-    <div class="mb-4">
-        <i class="bi bi-people display-1 text-muted"></i>
+
+<!-- OTRAS MÉTRICAS -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h6 class="fw-bold mb-0">Otros Estados</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center p-3 border rounded">
+                            <div class="display-6 fw-bold text-warning">2</div>
+                            <small class="text-muted">Pendientes de pago</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center p-3 border rounded">
+                            <div class="display-6 fw-bold text-info">3</div>
+                            <small class="text-muted">En proceso</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <h4 class="text-muted mb-3">No hay alumnos registrados</h4>
-    <p class="text-muted mb-4">Comienza agregando tu primer alumno al sistema</p>
-    <a class="btn btn-primary btn-lg" href="{% url 'alumnos:crear' %}">
-        <i class="bi bi-person-plus me-2"></i>Crear Primer Alumno
-    </a>
+    
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h6 class="fw-bold mb-0">Actividad Reciente</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <small>PDF enviado a Juan López</small>
+                        <small class="text-muted float-end">Hace 2 horas</small>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <i class="bi bi-person-plus text-primary me-2"></i>
+                        <small>Nuevo alumno registrado</small>
+                        <small class="text-muted float-end">Hoy, 10:30</small>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <i class="bi bi-search text-info me-2"></i>
+                        <small>Búsqueda en Wikipedia realizada</small>
+                        <small class="text-muted float-end">Ayer, 16:45</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endif %}
 {% endblock %}

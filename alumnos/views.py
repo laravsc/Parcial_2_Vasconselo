@@ -124,3 +124,4 @@ def enviar_pdf(request, alumno_id):
     # Si llegamos acá, fue enviado (o al menos el backend no lanzó excepción)
     messages.success(request, f"PDF enviado a: {', '.join(destinatarios)}")
     return redirect("alumnos:dashboard")
+
