@@ -25,7 +25,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4 mb-3">
         <div class="card border-0 shadow-sm h-100 bg-success bg-gradient text-white">
             <div class="card-body">
@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4 mb-3">
         <div class="card border-0 shadow-sm h-100 bg-info bg-gradient text-white">
             <div class="card-body">
@@ -70,13 +70,16 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
+                    <!-- En dashboard.html - línea 62 aproximadamente -->
+                    <a href="{% url 'alumnos:gestion_alumnos' %}"
+                        class="btn btn-primary btn-lg d-flex align-items-center">
                         <i class="bi bi-people me-3 fs-4"></i>
                         <div class="text-start">
                             <strong>Gestión de Alumnos</strong>
                             <small class="d-block opacity-75">Ver lista completa</small>
                         </div>
                     </a>
-                    
+
                     <a href="{% url 'alumnos:crear' %}" class="btn btn-success btn-lg d-flex align-items-center">
                         <i class="bi bi-person-plus me-3 fs-4"></i>
                         <div class="text-start">
@@ -84,7 +87,7 @@
                             <small class="d-block opacity-75">Registrar nuevo estudiante</small>
                         </div>
                     </a>
-                    
+
                     <a href="{% url 'scraper:buscar' %}" class="btn btn-info btn-lg d-flex align-items-center">
                         <i class="bi bi-search me-3 fs-4"></i>
                         <div class="text-start">
@@ -92,7 +95,7 @@
                             <small class="d-block opacity-75">Buscar en Wikipedia</small>
                         </div>
                     </a>
-                    
+
                     <a href="#" class="btn btn-warning btn-lg d-flex align-items-center">
                         <i class="bi bi-file-earmark-pdf me-3 fs-4"></i>
                         <div class="text-start">
@@ -104,7 +107,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- ALUMNOS RECIENTES -->
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
@@ -132,13 +135,15 @@
                                 <td>
                                     <span class="badge bg-success">Activo</span>
                                 </td>
-                                <td>{{ alumno.fecha_registro|date:"d/m/Y" }}</td>
+                                <td>{{ alumno.created_at|date:"d/m/Y" }}</td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="{% url 'alumnos:editar' alumno.pk %}" class="btn btn-outline-secondary" title="Editar">
+                                        <a href="{% url 'alumnos:editar' alumno.pk %}" class="btn btn-outline-secondary"
+                                            title="Editar">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <a href="{% url 'alumnos:enviar_pdf' alumno.id %}" class="btn btn-outline-info" title="Enviar PDF">
+                                        <a href="{% url 'alumnos:enviar_pdf' alumno.id %}" class="btn btn-outline-info"
+                                            title="Enviar PDF">
                                             <i class="bi bi-envelope"></i>
                                         </a>
                                         <a href="#" class="btn btn-outline-primary" title="Ver">
@@ -188,7 +193,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0">

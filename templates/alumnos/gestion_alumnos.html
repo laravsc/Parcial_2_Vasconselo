@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Alumnos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0"><i class="bi bi-people me-2"></i>Gestión de Alumnos</h2>
+        <p class="text-muted mb-0">Administra la información de todos los estudiantes registrados</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'alumnos:crear' %}">
+        <i class="bi bi-person-plus me-2"></i>Crear Alumno
+    </a>
+</div>
+
+{% if alumnos %}
+<div class="card card-custom shadow">
+    <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Lista de Alumnos Registrados</h5>
+        <span class="badge bg-light text-dark fs-6">{{ alumnos|length }} alumno{{ alumnos|pluralize }}</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Documento</th>
+                    <th>Email</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in alumnos %}
+                <tr>
+                    <td class="fw-semibold">{{ a.nombre }}</td>
+                    <td>{{ a.apellido }}</td>
+                    <td>{{ a.documento }}</td>
+                    <td>{{ a.email }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'alumnos:editar' a.pk %}" class="btn btn-sm btn-outline-secondary"
+                                data-bs-toggle="tooltip" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'alumnos:enviar_pdf' a.id %}" class="btn btn-sm btn-info"
+                                data-bs-toggle="tooltip" title="Enviar PDF por email">
+                                <i class="bi bi-envelope-arrow-up"></i>
+                            </a>
+                            <form method="post" action="{% url 'alumnos:eliminar' a.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" data-bs-toggle="tooltip"
+                                    title="Eliminar"
+                                    onclick="return confirm('¿Estás seguro de eliminar a {{ a.nombre }} {{ a.apellido }}?');">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="mb-4">
+        <i class="bi bi-people display-1 text-muted"></i>
+    </div>
+    <h4 class="text-muted mb-3">No hay alumnos registrados</h4>
+    <p class="text-muted mb-4">Comienza agregando tu primer alumno al sistema</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'alumnos:crear' %}">
+        <i class="bi bi-person-plus me-2"></i>Crear Primer Alumno
+    </a>
+</div>
+{% endif %}
+{% endblock %}

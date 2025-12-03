@@ -13,8 +13,27 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def dashboard(request):
+    """Dashboard principal con métricas"""
     alumnos = Alumno.objects.filter(usuario=request.user)
-    return render(request, 'alumnos/dashboard.html', {'alumnos': alumnos})
+    total_alumnos = alumnos.count()
+    alumnos_recientes = alumnos.order_by('-created_at')[:5]
+    
+    # Si necesitas otros cálculos, puedes agregarlos aquí
+    alumnos_activos = total_alumnos  # Por ahora, todos están activos
+    pendientes = 0  # Puedes modificar esto según tu lógica
+    
+    return render(request, 'alumnos/dashboard.html', {
+        'total_alumnos': total_alumnos,
+        'alumnos_activos': alumnos_activos,
+        'pendientes': pendientes,
+        'alumnos_recientes': alumnos_recientes,
+    })
+
+@login_required
+def gestion_alumnos(request):
+    """Lista completa de alumnos"""
+    alumnos = Alumno.objects.filter(usuario=request.user)
+    return render(request, 'alumnos/gestion_alumnos.html', {'alumnos': alumnos})
 
 @login_required
 def crear_alumno(request):
@@ -38,7 +57,7 @@ def editar_alumno(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Alumno actualizado correctamente.')
-            return redirect('alumnos:dashboard')
+            return redirect('alumnos:gestion_alumnos')
     else:
         form = AlumnoForm(instance=alumno)
     return render(request, 'alumnos/alumno_form.html', {'form': form, 'crear': False, 'alumno': alumno})
@@ -49,20 +68,14 @@ def eliminar_alumno(request, pk):
     if request.method == 'POST':
         alumno.delete()
         messages.success(request, 'Alumno eliminado.')
-        return redirect('alumnos:dashboard')
+        return redirect('alumnos:gestion_alumnos')
     return render(request, 'alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
 @login_required
 def enviar_pdf(request, alumno_id):
-    """
-    Genera PDF en memoria con la info del alumno y lo envía por email.
-    - Corrige el redirect a 'alumnos:dashboard'
-    - Maneja excepciones de email y las informa con messages + logger
-    """
-    # Asegurarse que el alumno exista y pertenezca al usuario
     alumno = get_object_or_404(Alumno, id=alumno_id, usuario=request.user)
 
-    # --- Generar PDF en memoria ---
+    # Generar PDF en memoria
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
 
@@ -73,7 +86,9 @@ def enviar_pdf(request, alumno_id):
     p.drawString(50, 750, f"Apellido: {alumno.apellido}")
     email_text = getattr(alumno, "email", "---")
     p.drawString(50, 730, f"Email: {email_text}")
-    p.drawString(50, 710, f"Creado por: {request.user.username}")
+    p.drawString(50, 710, f"Documento: {alumno.documento or 'No especificado'}")
+    p.drawString(50, 690, f"Fecha Nacimiento: {alumno.fecha_nacimiento or 'No especificada'}")
+    p.drawString(50, 670, f"Creado por: {request.user.username}")
 
     p.showPage()
     p.save()
@@ -82,11 +97,11 @@ def enviar_pdf(request, alumno_id):
     pdf_bytes = buffer.getvalue()
     buffer.close()
 
-    # --- Preparar correo ---
-    subject = "PDF del alumno"
-    body = f"Adjunto PDF de la ficha del alumno {alumno.nombre} {alumno.apellido}."
-    from_email = None  # dejar que Django tome DEFAULT_FROM_EMAIL
-    # Destinatarios: usar el correo del alumno si existe, sino el del usuario
+    # Preparar correo
+    subject = f"Ficha del Alumno - {alumno.nombre} {alumno.apellido}"
+    body = f"Adjunto PDF con la ficha del alumno {alumno.nombre} {alumno.apellido}."
+    from_email = None
+    
     destinatarios = []
     if email_text and email_text != '---':
         destinatarios.append(email_text)
@@ -94,9 +109,8 @@ def enviar_pdf(request, alumno_id):
         destinatarios.append(request.user.email)
 
     if not destinatarios:
-        # Si no hay a quién enviar, informamos y volvemos al dashboard
         messages.error(request, "No hay destinatarios válidos para enviar el PDF (sin email asociado).")
-        return redirect("alumnos:dashboard")
+        return redirect("alumnos:gestion_alumnos")
 
     email = EmailMessage(
         subject=subject,
@@ -106,22 +120,18 @@ def enviar_pdf(request, alumno_id):
     )
     email.attach("alumno.pdf", pdf_bytes, "application/pdf")
 
-    # --- Intentar enviar y manejar errores ---
     try:
         email.send(fail_silently=False)
     except BadHeaderError as e:
         logger.exception("BadHeaderError al enviar PDF: %s", e)
         messages.error(request, "Error enviando email: header inválido.")
-        return redirect("alumnos:dashboard")
+        return redirect("alumnos:gestion_alumnos")
     except Exception as e:
-        # Loguear error y mostrar mensaje claro al usuario
         logger.exception("Error al enviar email con PDF: %s", e)
         messages.error(request, "Ocurrió un error al intentar enviar el email. Revisá la configuración SMTP.")
-        # opcional: mostrar mensaje con detalles mínimos en dev (no desplegar en prod)
         messages.info(request, f"Detalle técnico: {str(e)}")
-        return redirect("alumnos:dashboard")
+        return redirect("alumnos:gestion_alumnos")
 
-    # Si llegamos acá, fue enviado (o al menos el backend no lanzó excepción)
     messages.success(request, f"PDF enviado a: {', '.join(destinatarios)}")
-    return redirect("alumnos:dashboard")
+    return redirect("alumnos:gestion_alumnos")
 
