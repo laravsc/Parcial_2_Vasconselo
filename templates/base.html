@@ -15,7 +15,12 @@
           <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}
               <li class="nav-item"><a class="nav-link" href="{% url 'alumnos:dashboard' %}">Dashboard</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout' %}">Cerrar sesión</a></li>
+              <li class="nav-item">
+                <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+                  {% csrf_token %}
+                <button type="submit" class="nav-link btn btn-link" style="padding:0; border:none;">Cerrar sesión</button>
+                </form>
+              </li>
             {% else %}
               <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Ingresar</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'accounts:registro' %}">Registrarse</a></li>

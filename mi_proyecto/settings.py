@@ -101,5 +101,6 @@ EMAIL_HOST_PASSWORD = "whsg crwc iasy homa"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-LOGIN_REDIRECT_URL = '/alumnos/'        # cuando inicien sesión irán a /alumnos/
-LOGOUT_REDIRECT_URL = '/'               # después de logout vuelven a la home
+LOGIN_REDIRECT_URL = '/alumnos/'
+LOGOUT_REDIRECT_URL = '/'              
+LOGIN_URL = 'accounts:login'
