@@ -1,48 +1,451 @@
+{% load static %}
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Mi Plataforma{% endblock %}</title>
+    <title>{% block title %}Sistema Académico{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ESTILOS PROFESIONALES -->
+    <style>
+      :root {
+        --primary-color: #1e3a8a;
+        --secondary-color: #3b82f6;
+        --accent-color: #0ea5e9;
+        --light-color: #f8fafc;
+        --dark-color: #1e293b;
+        --gray-color: #64748b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+      }
+      
+      body {
+        background-color: var(--light-color);
+        font-family: 'Inter', Arial, sans-serif;
+        color: var(--dark-color);
+        line-height: 1.6;
+      }
+
+      /* NAVBAR PROFESIONAL */
+      .navbar-custom {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+        padding: 0.8rem 0;
+      }
+      
+      .navbar-custom .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .navbar-custom .nav-link {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+      
+      .navbar-custom .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+      }
+      
+      .navbar-custom .btn-light {
+        font-weight: 500;
+        padding: 0.4rem 1.2rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+
+      /* SIDEBAR MODERNA */
+      .sidebar {
+        min-height: calc(100vh - 70px);
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        padding: 1.5rem 0;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      }
+      
+      .sidebar h6 {
+        color: var(--gray-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0 1.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .sidebar .nav-link {
+        color: var(--dark-color);
+        padding: 0.75rem 1.5rem;
+        margin: 0.15rem 0.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      
+      .sidebar .nav-link i {
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+      
+      .sidebar .nav-link:hover, 
+      .sidebar .nav-link.active {
+        background-color: rgba(59, 130, 246, 0.08);
+        color: var(--primary-color);
+        transform: translateX(5px);
+      }
+
+      /* CONTENIDO PRINCIPAL */
+      main {
+        padding: 2rem;
+        min-height: calc(100vh - 130px);
+      }
+      
+      @media (max-width: 768px) {
+        main {
+          padding: 1.5rem 1rem;
+        }
+      }
+
+      /* TÍTULOS */
+      h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+        color: var(--dark-color);
+      }
+      
+      h2 {
+        border-bottom: 3px solid var(--secondary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      /* CARTAS (CARDS) */
+      .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .card-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      
+      .card-header-custom {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        font-weight: 600;
+        padding: 1rem 1.5rem;
+        border: none;
+      }
+
+      /* TABLAS MEJORADAS */
+      .table-custom {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      
+      .table-custom thead th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        padding: 1rem;
+        border: none;
+      }
+      
+      .table-custom tbody tr {
+        transition: all 0.2s ease;
+      }
+      
+      .table-custom tbody tr:hover {
+        background-color: rgba(59, 130, 246, 0.05);
+      }
+      
+      .table-custom tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+      }
+
+      /* BOTONES MEJORADOS */
+      .btn-primary {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+        border: none;
+        font-weight: 500;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(30, 58, 138, 0.3);
+      }
+      
+      .btn-success {
+        background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        border: none;
+      }
+      
+      .btn-info {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #0284c7 100%);
+        border: none;
+      }
+      
+      .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+        border: none;
+      }
+      
+      .btn-outline-secondary {
+        border: 1px solid #cbd5e1;
+      }
+      
+      .btn-sm {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      /* FORMULARIOS */
+      .form-control, .form-select {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+      }
+      
+      .form-control:focus, .form-select:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      }
+      
+      .form-label {
+        font-weight: 500;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+      }
+
+      /* ALERTAS */
+      .alert {
+        border-radius: 10px;
+        border: none;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      
+      .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #065f46;
+        border-left: 4px solid var(--success-color);
+      }
+      
+      .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #92400e;
+        border-left: 4px solid var(--warning-color);
+      }
+      
+      .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #991b1b;
+        border-left: 4px solid var(--danger-color);
+      }
+      
+      .alert-info {
+        background-color: rgba(14, 165, 233, 0.1);
+        color: #075985;
+        border-left: 4px solid var(--accent-color);
+      }
+
+      /* FOOTER */
+      .footer-custom {
+        background-color: var(--dark-color);
+        color: #cbd5e1;
+        padding: 1.5rem 0;
+        margin-top: auto;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .sidebar {
+          min-height: auto;
+          border-right: none;
+          border-bottom: 1px solid #e2e8f0;
+          padding: 1rem 0;
+        }
+        
+        .sidebar .nav-link {
+          padding: 0.6rem 1rem;
+        }
+      }
+    </style>
+
+    {% block extra_head %}{% endblock %}
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <body class="d-flex flex-column min-vh-100">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom shadow-sm">
       <div class="container">
-        <!-- Usamos core:home para evitar NoReverseMatch -->
-        <a class="navbar-brand" href="{% url 'core:home' %}">Mi Plataforma</a>
-        <div class="collapse navbar-collapse">
+        <a class="navbar-brand" href="{% url 'core:home' %}">
+          <i class="bi bi-mortarboard-fill"></i> Sistema Académico
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'scraper:buscar' %}">Scraper</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'core:about' %}">Sobre el proyecto</a></li>
+          </ul>
+
           <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'alumnos:dashboard' %}">Dashboard</a></li>
+              <li class="nav-item me-3 d-flex align-items-center">
+                <span class="text-white d-none d-md-block">
+                  Hola, <strong>{{ user.username }}</strong>
+                </span>
+              </li>
+
               <li class="nav-item">
-                <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+                <a class="nav-link" href="{% url 'alumnos:dashboard' %}">
+                  <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                </a>
+              </li>
+
+              <li class="nav-item ms-2">
+                <form method="post" action="{% url 'accounts:logout' %}">
                   {% csrf_token %}
-                <button type="submit" class="nav-link btn btn-link" style="padding:0; border:none;">Cerrar sesión</button>
+                  <button class="btn btn-light">
+                    <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
+                  </button>
                 </form>
               </li>
             {% else %}
-              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Ingresar</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'accounts:registro' %}">Registrarse</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'accounts:login' %}">
+                  <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
+                </a>
+              </li>
+              <li class="nav-item ms-2">
+                <a class="btn btn-outline-light" href="{% url 'accounts:registro' %}">Registrarse</a>
+              </li>
             {% endif %}
           </ul>
         </div>
       </div>
     </nav>
 
-    <div class="container">
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="container-fluid flex-grow-1">
+      <div class="row h-100">
+        {% if user.is_authenticated %}
+        <!-- SIDEBAR -->
+        <aside class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+          <h6 class="text-uppercase text-muted mb-3">Menú Principal</h6>
+          <nav class="nav flex-column">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+               href="{% url 'alumnos:dashboard' %}">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'crear' %}active{% endif %}" 
+               href="{% url 'alumnos:crear' %}">
+              <i class="bi bi-person-plus"></i> Crear Alumno
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'buscar' %}active{% endif %}" 
+               href="{% url 'scraper:buscar' %}">
+              <i class="bi bi-search"></i> Scraper
+            </a>
+          </nav>
+        </aside>
+        {% endif %}
 
-      {% block content %}{% endblock %}
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="{% if user.is_authenticated %}col-md-9 col-lg-10{% else %}col-12{% endif %}">
+          <div class="container-fluid">
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+          </div>
+        </main>
+      </div>
     </div>
 
+    <!-- FOOTER -->
+    <footer class="footer-custom mt-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 text-center text-md-start">
+            &copy; {{ now|date:"Y" }} Sistema Académico — Plataforma de Gestión Educativa
+          </div>
+          <div class="col-md-6 text-center text-md-end">
+            <a href="#" class="me-3">Términos</a>
+            <a href="#" class="me-3">Privacidad</a>
+            <a href="#">Contacto</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts adicionales -->
+    <script>
+      // Activar tooltips de Bootstrap
+      document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Auto-ocultar alertas después de 5 segundos
+        setTimeout(function() {
+          var alerts = document.querySelectorAll('.alert');
+          alerts.forEach(function(alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          });
+        }, 5000);
+      });
+    </script>
+
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

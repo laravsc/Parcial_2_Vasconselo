@@ -1,7 +1,72 @@
 {% extends "base.html" %}
 {% block title %}Acerca de{% endblock %}
+
 {% block content %}
-  <h2>Acerca de este proyecto</h2>
-  <p>Proyecto de parcial: gestión de alumnos, generación de PDFs y scraping educativo.</p>
-  <p>Hecho con Django + Bootstrap.</p>
+<div class="row justify-content-center">
+  <div class="col-md-10">
+    <div class="card card-custom shadow">
+      <div class="card-header card-header-custom text-center">
+        <h4 class="mb-0"><i class="bi bi-info-circle me-2"></i>Acerca de este Proyecto</h4>
+      </div>
+      <div class="card-body p-5">
+        <div class="text-center mb-5">
+          <i class="bi bi-mortarboard-fill display-1 text-primary"></i>
+        </div>
+
+        <h3 class="text-center mb-4">Sistema de Gestión Académica Integral</h3>
+
+        <p class="lead text-center mb-5">
+          Plataforma profesional diseñada para optimizar la administración académica,
+          generación de reportes y búsqueda de contenido educativo.
+        </p>
+
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm card-custom">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-people display-4 text-primary mb-3"></i>
+                <h5>Gestión de Alumnos</h5>
+                <p class="text-muted">Administración completa de estudiantes con historial académico y seguimiento
+                  personalizado.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm card-custom">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-file-earmark-pdf display-4 text-danger mb-3"></i>
+                <h5>Reportes en PDF</h5>
+                <p class="text-muted">Generación de reportes profesionales en formato PDF, listos para compartir y
+                  archivar.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm card-custom">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-shield-check display-4 text-success mb-3"></i>
+                <h5>Seguridad Educativa</h5>
+                <p class="text-muted">Acceso a herramientas educativas relevantes mediante búsqueda inteligente en
+                  fuentes confiables.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 text-center">
+          <p class="lead">Proyecto de parcial: gestión de alumnos, generación de PDFs y scraping educativo.</p>
+          <p class="text-muted">Hecho con Django + Bootstrap.</p>
+
+          <div class="mt-4">
+            <a href="{% url 'core:home' %}" class="btn btn-primary">
+              <i class="bi bi-house me-2"></i>Volver al Inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -2,48 +2,72 @@
 {% block title %}Scraper Wikipedia{% endblock %}
 
 {% block content %}
-<h2>Scraper Wikipedia</h2>
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card card-custom shadow">
+            <div class="card-header card-header-custom text-center">
+                <h4 class="mb-0"><i class="bi bi-search me-2"></i>Scraper Wikipedia</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="get" action="{% url 'scraper:buscar' %}">
+                    <div class="mb-4">
+                        <label for="id_palabra" class="form-label">Buscar en Wikipedia</label>
+                        <div class="input-group">
+                            <input type="text" name="palabra" id="id_palabra" class="form-control form-control-lg"
+                                placeholder="Ej: Django, Python, Inteligencia Artificial"
+                                value="{{ palabra|default:'' }}">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
 
-<form method="get" action="{% url 'scraper:buscar' %}">
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Buscar</button>
-</form>
+                {% if palabra %}
+                <hr class="my-4">
+                <h5 class="mb-3">Resultados para: <span class="text-primary">"{{ palabra }}"</span></h5>
 
-<hr>
-
-{% if palabra %}
-    <h4>Resultados para: "{{ palabra }}"</h4>
-{% endif %}
-
-{% if resultados %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Descripción (primer párrafo)</th>
-                <th>Enlace</th>
-                <th>Enviar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for r in resultados %}
-            <tr>
-                <td>{{ r.titulo }}</td>
-                <td>{{ r.descripcion }}</td>
-                <td><a href="{{ r.url }}" target="_blank" rel="noopener">Abrir</a></td>
-                <td>
-                    <!-- El botón enviar envía por GET a la vista enviar_resultados -->
-                    <a class="btn btn-sm btn-success" 
-                    href="{% url 'scraper:enviar' %}?palabra={{ r.titulo|urlencode }}&descripcion={{ r.descripcion|urlencode }}&url={{ r.url|urlencode }}">
-                    Enviar PDF
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% elif palabra %}
-    <p>No se encontraron resultados o hubo un problema con la búsqueda.</p>
-{% endif %}
-
+                {% if resultados %}
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Descripción (primer párrafo)</th>
+                                <th>Enlace</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in resultados %}
+                            <tr>
+                                <td class="fw-semibold">{{ r.titulo }}</td>
+                                <td>{{ r.descripcion|truncatechars:200 }}</td>
+                                <td>
+                                    <a href="{{ r.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-box-arrow-up-right"></i> Abrir
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-success"
+                                        href="{% url 'scraper:enviar' %}?palabra={{ r.titulo|urlencode }}&descripcion={{ r.descripcion|urlencode }}&url={{ r.url|urlencode }}">
+                                        <i class="bi bi-envelope-arrow-up me-1"></i>Enviar PDF
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    No se encontraron resultados o hubo un problema con la búsqueda.
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

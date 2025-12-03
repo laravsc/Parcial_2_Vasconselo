@@ -1,30 +1,62 @@
 {% extends "base.html" %}
-{% block title %}Resultados{% endblock %}
+{% block title %}Resultados de Búsqueda{% endblock %}
 
 {% block content %}
-<h2>Resultados para "{{ keyword }}"</h2>
+<div class="card card-custom shadow">
+    <div class="card-header card-header-custom">
+        <h4 class="mb-0"><i class="bi bi-search me-2"></i>Resultados para "{{ keyword }}"</h4>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST" action="{% url 'scraper:enviar' %}">
+            {% csrf_token %}
+            <input type="hidden" name="keyword" value="{{ keyword }}">
 
-<form method="POST" action="{% url 'scraper:enviar' %}">
-    {% csrf_token %}
-    <input type="hidden" name="keyword" value="{{ keyword }}">
+            {% if resultados %}
+            <div class="table-responsive mb-4">
+                <table class="table table-custom table-hover">
+                    <thead>
+                        <tr>
+                            <th>Título encontrado</th>
+                            <th class="text-center">Seleccionar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in resultados %}
+                        <tr>
+                            <td>{{ r }}</td>
+                            <td class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="resultados" value="{{ r }}"
+                                        id="check{{ forloop.counter }}" checked>
+                                    <label class="form-check-label" for="check{{ forloop.counter }}"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Título encontrado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for r in resultados %}
-            <tr>
-                <td>{{ r }}</td>
-                <input type="hidden" name="resultados" value="{{ r }}">
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <button class="btn btn-success" type="submit">Enviar por correo</button>
-</form>
-
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'scraper:home' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Nueva Búsqueda
+                </a>
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="bi bi-send me-2"></i>Enviar Resultados por Correo
+                </button>
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                No se encontraron resultados para "{{ keyword }}".
+            </div>
+            <div class="text-center">
+                <a href="{% url 'scraper:home' %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Volver a Buscar
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
 {% endblock %}

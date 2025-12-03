@@ -1,11 +1,36 @@
 {% extends "base.html" %}
 {% block title %}Eliminar Alumno{% endblock %}
+
 {% block content %}
-  <h2>Eliminar Alumno</h2>
-  <p>¿Querés eliminar a {{ alumno.nombre }} {{ alumno.apellido }}?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button class="btn btn-danger" type="submit">Sí, eliminar</button>
-    <a class="btn btn-secondary" href="{% url 'alumnos:dashboard' %}">Cancelar</a>
-  </form>
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card card-custom shadow">
+      <div class="card-header card-header-custom text-center">
+        <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Eliminar Alumno</h4>
+      </div>
+      <div class="card-body p-4 text-center">
+        <div class="mb-4">
+          <i class="bi bi-person-x display-1 text-danger"></i>
+        </div>
+
+        <h5>¿Estás seguro de que querés eliminar a este alumno?</h5>
+        <p class="lead mb-4">
+          <strong>{{ alumno.nombre }} {{ alumno.apellido }}</strong>
+        </p>
+
+        <p class="text-muted">Esta acción no se puede deshacer.</p>
+
+        <form method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-lg me-2">
+            <i class="bi bi-trash me-2"></i>Sí, eliminar
+          </button>
+          <a href="{% url 'alumnos:dashboard' %}" class="btn btn-secondary btn-lg">
+            <i class="bi bi-x-circle me-2"></i>Cancelar
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
